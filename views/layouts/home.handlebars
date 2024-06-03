@@ -1,0 +1,63 @@
+<div>
+    <h1>Skate Park</h1>
+
+    <div class="py-4">
+        <h2>Lista de participantes</h2>
+        <hr />
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Foto</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Años de experiencia</th>
+                    <th scope="col">Especialidad</th>
+                    <th scope="col">Estado</th>
+                </tr>
+            </thead>
+            <tbody id='cuerpo'></tbody>
+        </table>
+        <a href="/login">Iniciar Sesión</a> |
+        <a href="/registro">Registrarme</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    const url = 'http://localhost:3000/usuarios';
+    const tbody = document.getElementById('cuerpo');
+
+    window.onload = getData;
+
+    async function getData() {
+        try {
+            const response = await axios.get(url);
+            const usuarios = response.data;
+
+            let estado;
+
+            usuarios.forEach((c, i) => {
+                estado = c.estado
+                    ? '<td class="text-success font-weight-bold">Aprobado</td>'
+                    : '<td class="text-warning font-weight-bold">En revisión</td>';
+
+                const ruta_foto = `/uploads/${c.foto}`;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td><img src='${ruta_foto}' style='width:100px;'></td>
+                        <td>${c.nombre}</td>
+                        <td>${c.anos_experiencia}</td>
+                        <td>${c.especialidad}</td>
+                        ${estado}
+                    </tr>
+                `;
+            });
+        } catch (error) {
+            console.error('Error al obtener los datos:', error);
+            alert('Hubo un problema al cargar los datos. Inténtelo de nuevo más tarde.');
+        }
+    }
+</script>
